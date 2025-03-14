@@ -6,6 +6,7 @@ A simple application to manage contacts, developed with PyQt5 following the MVC 
 
 - Create, edit and delete contacts
 - View contacts in a table
+- Export contacts to a text file (name, phone format)
 - Storage of contact data (name and phone number)
 
 ## Requirements

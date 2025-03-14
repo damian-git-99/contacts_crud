@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
                              QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
-                             QMessageBox, QLabel)
+                             QMessageBox, QLabel, QFileDialog)
 from PyQt5.QtCore import Qt
 from view.contact_dialog import ContactDialog
 
@@ -33,6 +33,7 @@ class MainWindow(QMainWindow):
         self.btn_new = QPushButton("New Contact")
         self.btn_edit = QPushButton("Edit Contact")
         self.btn_delete = QPushButton("Delete Contact")
+        self.btn_export = QPushButton("Export to TXT")
         
         # Button style
         button_style = """
@@ -57,10 +58,15 @@ class MainWindow(QMainWindow):
         self.btn_edit.setStyleSheet(button_style)
         self.btn_delete.setStyleSheet(button_style.replace("#4CAF50", "#f44336").replace("#45a049", "#d32f2f"))
         
+        # Export button with blue style
+        self.btn_export.setStyleSheet(button_style.replace("#4CAF50", "#2196F3").replace("#45a049", "#0b7dda"))
+        
         # Add buttons to layout
         left_layout.addWidget(self.btn_new)
         left_layout.addWidget(self.btn_edit)
         left_layout.addWidget(self.btn_delete)
+        left_layout.addSpacing(20)  # Add some space before the export button
+        left_layout.addWidget(self.btn_export)
         left_layout.addStretch()
         
         # Right panel (table)
@@ -157,4 +163,17 @@ class MainWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No
         )
-        return reply == QMessageBox.Yes 
+        return reply == QMessageBox.Yes
+    
+    def export_contacts_dialog(self):
+        """Open a dialog to export contacts to a text file"""
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export Contacts",
+            "",
+            "Text Files (*.txt);;All Files (*)"
+        )
+        
+        if file_path:
+            return file_path
+        return None 

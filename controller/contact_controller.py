@@ -10,6 +10,7 @@ class ContactController:
         self.view.btn_new.clicked.connect(self.create_contact)
         self.view.btn_edit.clicked.connect(self.edit_contact)
         self.view.btn_delete.clicked.connect(self.delete_contact)
+        self.view.btn_export.clicked.connect(self.export_contacts)
         
         # Load initial contacts (if any)
         self.refresh_contacts()
@@ -66,6 +67,29 @@ class ContactController:
                 self.view.show_info(f"Contact '{contact.name}' deleted successfully.")
             else:
                 self.view.show_error("Could not delete the contact.")
+    
+    def export_contacts(self):
+        """Exports contacts to a text file"""
+        contacts = self.model.get_all_contacts()
+        
+        # Check if there are contacts to export
+        if not contacts:
+            self.view.show_error("There are no contacts to export.")
+            return
+        
+        # Get file path from dialog
+        file_path = self.view.export_contacts_dialog()
+        if not file_path:
+            return  # User cancelled the dialog
+        
+        try:
+            with open(file_path, 'w') as file:
+                for contact in contacts:
+                    file.write(f"{contact.name}, {contact.phone}\n")
+            
+            self.view.show_info(f"Contacts successfully exported to {file_path}")
+        except Exception as e:
+            self.view.show_error(f"Error exporting contacts: {str(e)}")
     
     def refresh_contacts(self):
         """Updates the contact list in the view"""
