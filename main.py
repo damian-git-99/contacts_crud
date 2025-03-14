@@ -4,23 +4,23 @@ from view.main_window import MainWindow
 from controller.contact_controller import ContactController
 
 def main():
-    """Función principal para iniciar la aplicación"""
-    # Crear la aplicación Qt
+    """Main function to start the application"""
+    # Create Qt application
     app = QApplication(sys.argv)
     
-    # Establecer estilo global
+    # Set global style
     app.setStyle("Fusion")
     
-    # Crear la ventana principal
+    # Create main window
     main_window = MainWindow()
     
-    # Crear el controlador y conectarlo con la vista
-    controller = ContactController(main_window)
+    # Create contact controller and connect it with the view
+    contact_controller = ContactController(main_window)
     
-    # Mostrar la ventana principal
+    # Show main window
     main_window.show()
     
-    # Ejecutar el bucle de eventos
+    # Run event loop
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
