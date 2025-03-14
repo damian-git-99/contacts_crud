@@ -123,4 +123,9 @@ ui_*.py
 .vscode/
 *.swp
 *.swo
-.DS_Store 
+.DS_Store
+
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3 
