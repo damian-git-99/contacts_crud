@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
                              QMessageBox, QLabel, QFileDialog)
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCloseEvent
 from view.contact_dialog import ContactDialog
 
 class MainWindow(QMainWindow):
@@ -201,4 +202,19 @@ class MainWindow(QMainWindow):
         
         if file_path:
             return file_path
-        return None 
+        return None
+    
+    def closeEvent(self, event: QCloseEvent):
+        """Handle the window close event with confirmation dialog"""
+        reply = QMessageBox.question(
+            self,
+            "Confirm Exit",
+            "Are you sure you want to exit the application?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        
+        if reply == QMessageBox.Yes:
+            event.accept()  # Accept the close event
+        else:
+            event.ignore()  # Ignore the close event 
