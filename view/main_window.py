@@ -33,7 +33,14 @@ class MainWindow(QMainWindow):
         self.btn_new = QPushButton("New Contact")
         self.btn_edit = QPushButton("Edit Contact")
         self.btn_delete = QPushButton("Delete Contact")
+        
+        # Import/Export section
+        import_export_label = QLabel("Import/Export")
+        import_export_label.setAlignment(Qt.AlignCenter)
+        import_export_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;")
+        
         self.btn_export = QPushButton("Export to TXT")
+        self.btn_import = QPushButton("Import from TXT")
         
         # Button style
         button_style = """
@@ -61,12 +68,17 @@ class MainWindow(QMainWindow):
         # Export button with blue style
         self.btn_export.setStyleSheet(button_style.replace("#4CAF50", "#2196F3").replace("#45a049", "#0b7dda"))
         
+        # Import button with purple style
+        self.btn_import.setStyleSheet(button_style.replace("#4CAF50", "#9C27B0").replace("#45a049", "#7B1FA2"))
+        
         # Add buttons to layout
         left_layout.addWidget(self.btn_new)
         left_layout.addWidget(self.btn_edit)
         left_layout.addWidget(self.btn_delete)
-        left_layout.addSpacing(20)  # Add some space before the export button
+        left_layout.addSpacing(20)  # Add some space before the import/export section
+        left_layout.addWidget(import_export_label)
         left_layout.addWidget(self.btn_export)
+        left_layout.addWidget(self.btn_import)
         left_layout.addStretch()
         
         # Right panel (table)
@@ -170,6 +182,19 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             "Export Contacts",
+            "",
+            "Text Files (*.txt);;All Files (*)"
+        )
+        
+        if file_path:
+            return file_path
+        return None
+        
+    def import_contacts_dialog(self):
+        """Open a dialog to import contacts from a text file"""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Import Contacts",
             "",
             "Text Files (*.txt);;All Files (*)"
         )
