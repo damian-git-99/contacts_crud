@@ -11,6 +11,17 @@ A simple application to manage contacts, developed with PyQt5 following the MVC 
 - Persistent storage using SQLite database
 - Exit confirmation dialog
 
+## Architecture
+
+The application follows the Model-View-Controller (MVC) pattern:
+
+- **Model**:
+  - ContactModel: Handles data storage and retrieval using SQLite
+  - ImportExportModel: Manages the logic for importing and exporting contacts
+- **View**: Manages the user interface with PyQt5
+- **Controller**:
+  - ContactController: Manages all contact operations (create, edit, delete, import, export)
+
 ## Requirements
 
 - Python 3.6+

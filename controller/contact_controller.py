@@ -1,11 +1,12 @@
 from model.contact_model import ContactModel
+from model.import_export_model import ImportExportModel
 from view.contact_dialog import ContactDialog
-import re
 
 class ContactController:
     def __init__(self, view):
         self.view = view
         self.model = ContactModel()
+        self.import_export_model = ImportExportModel(self.model)
         
         # Connect view signals with controller methods
         self.view.btn_new.clicked.connect(self.create_contact)
@@ -72,26 +73,19 @@ class ContactController:
     
     def export_contacts(self):
         """Exports contacts to a text file"""
-        contacts = self.model.get_all_contacts()
-        
-        # Check if there are contacts to export
-        if not contacts:
-            self.view.show_error("There are no contacts to export.")
-            return
-        
         # Get file path from dialog
         file_path = self.view.export_contacts_dialog()
         if not file_path:
             return  # User cancelled the dialog
         
-        try:
-            with open(file_path, 'w') as file:
-                for contact in contacts:
-                    file.write(f"{contact.name}, {contact.phone}\n")
-            
-            self.view.show_info(f"Contacts successfully exported to {file_path}")
-        except Exception as e:
-            self.view.show_error(f"Error exporting contacts: {str(e)}")
+        # Use the import/export model to handle the export
+        success, message = self.import_export_model.export_contacts_to_file(file_path)
+        
+        # Show result message
+        if success:
+            self.view.show_info(message)
+        else:
+            self.view.show_error(message)
     
     def import_contacts(self):
         """Imports contacts from a text file"""
@@ -100,53 +94,17 @@ class ContactController:
         if not file_path:
             return  # User cancelled the dialog
         
-        try:
-            imported_count = 0
-            invalid_lines = []
-            
-            with open(file_path, 'r') as file:
-                for line_number, line in enumerate(file, 1):
-                    line = line.strip()
-                    if not line:  # Skip empty lines
-                        continue
-                    
-                    # Parse line with format "name, phone"
-                    match = re.match(r'^(.+?),\s*(\d+)$', line)
-                    if match:
-                        name = match.group(1).strip()
-                        phone = match.group(2).strip()
-                        
-                        if name and phone:
-                            self.model.add_contact(name, phone)
-                            imported_count += 1
-                        else:
-                            invalid_lines.append(f"Line {line_number}: Missing name or phone")
-                    else:
-                        invalid_lines.append(f"Line {line_number}: Invalid format")
-            
-            # Refresh the contacts list
-            self.refresh_contacts()
-            
-            # Show results
-            if imported_count > 0:
-                message = f"Successfully imported {imported_count} contact(s)"
-                if invalid_lines:
-                    message += f"\n\nWarning: {len(invalid_lines)} line(s) could not be imported:"
-                    # Show at most 5 invalid lines to avoid a huge message box
-                    for i, error in enumerate(invalid_lines[:5]):
-                        message += f"\n- {error}"
-                    if len(invalid_lines) > 5:
-                        message += f"\n- ... and {len(invalid_lines) - 5} more"
-                
-                self.view.show_info(message)
-            else:
-                if invalid_lines:
-                    self.view.show_error(f"No contacts were imported. {len(invalid_lines)} line(s) had invalid format.")
-                else:
-                    self.view.show_error("No contacts were found in the file.")
-                    
-        except Exception as e:
-            self.view.show_error(f"Error importing contacts: {str(e)}")
+        # Use the import/export model to handle the import
+        success, message = self.import_export_model.import_contacts_from_file(file_path)
+        
+        # Refresh contacts list
+        self.refresh_contacts()
+        
+        # Show result message
+        if success:
+            self.view.show_info(message)
+        else:
+            self.view.show_error(message)
     
     def refresh_contacts(self):
         """Updates the contact list in the view"""
