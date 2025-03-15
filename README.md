@@ -43,3 +43,7 @@ python main.py
 ## Database
 
 The application stores contacts in a SQLite database file (`contacts.db`) in the application directory. This ensures that your contacts are preserved between application sessions.
+
+## License
+
+This application is licensed under the GNU General Public License v3.0 (GPL-3.0). This is compatible with PyQt5's GPL license.
