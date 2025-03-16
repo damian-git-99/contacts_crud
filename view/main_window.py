@@ -1,48 +1,63 @@
-from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
-                             QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
-                             QMessageBox, QLabel, QFileDialog)
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QHeaderView,
+    QMessageBox,
+    QLabel,
+    QFileDialog,
+    QLineEdit,
+)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QCloseEvent
-from view.contact_dialog import ContactDialog
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        
+
         # Main window configuration
         self.setWindowTitle("Contacts Application")
         self.setGeometry(100, 100, 800, 500)
-        
+
         # Central widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        
+
         # Main layout
         main_layout = QHBoxLayout(central_widget)
-        
+
         # Left panel (buttons)
         left_panel = QWidget()
         left_layout = QVBoxLayout(left_panel)
-        
+
         # Left panel title
         left_title = QLabel("Actions")
         left_title.setAlignment(Qt.AlignCenter)
-        left_title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 20px;")
+        left_title.setStyleSheet(
+            "font-size: 16px; font-weight: bold; margin-bottom: 20px;"
+        )
         left_layout.addWidget(left_title)
-        
+
         # Buttons
         self.btn_new = QPushButton("New Contact")
         self.btn_edit = QPushButton("Edit Contact")
         self.btn_delete = QPushButton("Delete Contact")
-        
+
         # Import/Export section
         import_export_label = QLabel("Import/Export")
         import_export_label.setAlignment(Qt.AlignCenter)
-        import_export_label.setStyleSheet("font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;")
-        
+        import_export_label.setStyleSheet(
+            "font-size: 14px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;"
+        )
+
         self.btn_export = QPushButton("Export to TXT")
         self.btn_import = QPushButton("Import from TXT")
-        
+
         # Button style
         button_style = """
             QPushButton {
@@ -64,14 +79,20 @@ class MainWindow(QMainWindow):
         """
         self.btn_new.setStyleSheet(button_style)
         self.btn_edit.setStyleSheet(button_style)
-        self.btn_delete.setStyleSheet(button_style.replace("#4CAF50", "#f44336").replace("#45a049", "#d32f2f"))
-        
+        self.btn_delete.setStyleSheet(
+            button_style.replace("#4CAF50", "#f44336").replace("#45a049", "#d32f2f")
+        )
+
         # Export button with blue style
-        self.btn_export.setStyleSheet(button_style.replace("#4CAF50", "#2196F3").replace("#45a049", "#0b7dda"))
-        
+        self.btn_export.setStyleSheet(
+            button_style.replace("#4CAF50", "#2196F3").replace("#45a049", "#0b7dda")
+        )
+
         # Import button with purple style
-        self.btn_import.setStyleSheet(button_style.replace("#4CAF50", "#9C27B0").replace("#45a049", "#7B1FA2"))
-        
+        self.btn_import.setStyleSheet(
+            button_style.replace("#4CAF50", "#9C27B0").replace("#45a049", "#7B1FA2")
+        )
+
         # Add buttons to layout
         left_layout.addWidget(self.btn_new)
         left_layout.addWidget(self.btn_edit)
@@ -81,17 +102,38 @@ class MainWindow(QMainWindow):
         left_layout.addWidget(self.btn_export)
         left_layout.addWidget(self.btn_import)
         left_layout.addStretch()
-        
+
         # Right panel (table)
         right_panel = QWidget()
         right_layout = QVBoxLayout(right_panel)
-        
+
         # Right panel title
         right_title = QLabel("Contacts List")
         right_title.setAlignment(Qt.AlignCenter)
-        right_title.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 20px;")
+        right_title.setStyleSheet(
+            "font-size: 16px; font-weight: bold; margin-bottom: 10px;"
+        )
         right_layout.addWidget(right_title)
-        
+
+        # Search input
+        self.search_input = QLineEdit()
+        self.search_input.setPlaceholderText("Search contacts...")
+        self.search_input.setStyleSheet(
+            """
+            QLineEdit {
+                padding: 8px;
+                font-size: 14px;
+                border: 1px solid #dddddd;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+            QLineEdit:focus {
+                border-color: #4CAF50;
+            }
+        """
+        )
+        right_layout.addWidget(self.search_input)
+
         # Contacts table
         self.table = QTableWidget(0, 3)  # 0 rows initially, 3 columns (ID, Name, Phone)
         self.table.setHorizontalHeaderLabels(["ID", "Name", "Phone"])
@@ -100,9 +142,10 @@ class MainWindow(QMainWindow):
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setSelectionMode(QTableWidget.SingleSelection)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        
+
         # Table style
-        self.table.setStyleSheet("""
+        self.table.setStyleSheet(
+            """
             QTableWidget {
                 border: 1px solid #dddddd;
                 border-radius: 5px;
@@ -120,27 +163,28 @@ class MainWindow(QMainWindow):
             QTableWidget::item:selected {
                 background-color: #e0f7fa;
             }
-        """)
-        
+        """
+        )
+
         right_layout.addWidget(self.table)
-        
+
         # Add panels to main layout
         main_layout.addWidget(left_panel, 1)
         main_layout.addWidget(right_panel, 3)
-        
+
         # Initially, disable edit and delete buttons
         self.btn_edit.setEnabled(False)
         self.btn_delete.setEnabled(False)
-        
+
         # Connect table selection with button enabling
         self.table.itemSelectionChanged.connect(self.on_selection_changed)
-    
+
     def on_selection_changed(self):
         """Enable or disable buttons based on table selection"""
         has_selection = len(self.table.selectedItems()) > 0
         self.btn_edit.setEnabled(has_selection)
         self.btn_delete.setEnabled(has_selection)
-    
+
     def get_selected_contact_id(self):
         """Get the ID of the selected contact"""
         if len(self.table.selectedItems()) > 0:
@@ -148,7 +192,7 @@ class MainWindow(QMainWindow):
             id_item = self.table.item(row, 0)
             return int(id_item.text())
         return None
-    
+
     def show_contacts(self, contacts):
         """Show contacts in the table"""
         self.table.setRowCount(0)
@@ -158,52 +202,46 @@ class MainWindow(QMainWindow):
             self.table.setItem(row, 0, QTableWidgetItem(str(contact.contact_id)))
             self.table.setItem(row, 1, QTableWidgetItem(contact.name))
             self.table.setItem(row, 2, QTableWidgetItem(contact.phone))
-    
+
     def show_error(self, message):
         """Show an error message"""
         QMessageBox.critical(self, "Error", message)
-    
+
     def show_info(self, message):
         """Show an informative message"""
         QMessageBox.information(self, "Information", message)
-    
+
     def confirm_delete(self):
         """Request confirmation to delete a contact"""
         reply = QMessageBox.question(
-            self, 
+            self,
             "Confirm deletion",
             "Are you sure you want to delete this contact?",
             QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
+            QMessageBox.No,
         )
         return reply == QMessageBox.Yes
-    
+
     def export_contacts_dialog(self):
         """Open a dialog to export contacts to a text file"""
         file_path, _ = QFileDialog.getSaveFileName(
-            self,
-            "Export Contacts",
-            "",
-            "Text Files (*.txt);;All Files (*)"
+            self, "Export Contacts", "", "Text Files (*.txt);;All Files (*)"
         )
-        
+
         if file_path:
             return file_path
         return None
-        
+
     def import_contacts_dialog(self):
         """Open a dialog to import contacts from a text file"""
         file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Import Contacts",
-            "",
-            "Text Files (*.txt);;All Files (*)"
+            self, "Import Contacts", "", "Text Files (*.txt);;All Files (*)"
         )
-        
+
         if file_path:
             return file_path
         return None
-    
+
     def closeEvent(self, event: QCloseEvent):
         """Handle the window close event with confirmation dialog"""
         reply = QMessageBox.question(
@@ -211,10 +249,10 @@ class MainWindow(QMainWindow):
             "Confirm Exit",
             "Are you sure you want to exit the application?",
             QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
+            QMessageBox.No,
         )
-        
+
         if reply == QMessageBox.Yes:
             event.accept()  # Accept the close event
         else:
-            event.ignore()  # Ignore the close event 
+            event.ignore()  # Ignore the close event
