@@ -40,6 +40,16 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## Testing
+
+To run the unit tests:
+
+```
+python -m pytest -v -s
+```
+
+This will run all tests with verbose output and showing print statements.
+
 ## Database
 
 The application stores contacts in a SQLite database file (`contacts.db`) in the application directory. This ensures that your contacts are preserved between application sessions.
