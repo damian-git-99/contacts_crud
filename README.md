@@ -8,6 +8,7 @@ A simple application to manage contacts, developed with PyQt5 following the MVC 
 - View contacts in a table
 - Export contacts to a text file (name, phone format)
 - Import contacts from a text file (name, phone format)
+- Real-time contact search by name or phone number
 - Persistent storage using SQLite database
 - Exit confirmation dialog
 
